@@ -4,10 +4,13 @@ import { NavigationActions } from 'react-navigation'
 import {
   View,
   Text,
-  StyleSheet
+  StyleSheet,
+  Platform,
+  StatusBar
 } from 'react-native'
 
 import Button from '../components/Button'
+import realm from '../config/realm'
 
 class GameOver extends Component {
   static navigationOptions = {
@@ -17,6 +20,41 @@ class GameOver extends Component {
 
   constructor(props) {
     super(props)
+  }
+
+  componentWillMount() {
+    StatusBar.setBarStyle('light-content')
+    if (Platform.OS == 'android')
+      StatusBar.setBackgroundColor('#013964')
+
+    const currentBestScore = realm.objects('Game')
+
+    if (currentBestScore.length == 0)
+      try {
+        realm.write(() => {
+          realm.create('Game', {
+            id: 1,
+            bestScore: this.props.game.moves - 17
+          })
+        })
+      } catch (e) {
+        this.backToMainMenu()
+      }
+    else {
+      const value = currentBestScore.filtered('id = 1')
+
+      if (this.props.game.moves - 17 < value[0].bestScore)
+        try {
+          realm.write(() => {
+            realm.create('Game', {
+              id: 1,
+              bestScore: this.props.game.moves - 17
+            }, true)
+          })
+        } catch (e) {
+          this.backToMainMenu()
+        }
+    }
   }
 
   backToMainMenu() {

@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import {
   View,
   Text,
-  StyleSheet
+  StyleSheet,
+  Platform,
+  StatusBar
 } from 'react-native'
 
 import Board from '../components/Board'
@@ -19,6 +21,12 @@ class Game extends Component {
 
   constructor(props) {
     super(props)
+  }
+
+  componentWillMount() {
+    StatusBar.setBarStyle('light-content')
+    if (Platform.OS == 'android')
+      StatusBar.setBackgroundColor('#013964')
   }
 
   render() {

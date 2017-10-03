@@ -60,7 +60,7 @@ class Board extends Component {
                   underlayColor={square.condition ? 'white' : this.decideSquareStyle(square).backgroundColor}
                 >
                   {/* <View/> */}
-                <Text>{square.haveShip ? 'x': ''}</Text>
+                  <Text>{square.haveShip ? 'e' : null}</Text>
                 </TouchableHighlight>
               ))}
             </View>

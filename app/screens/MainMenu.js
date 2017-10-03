@@ -5,11 +5,14 @@ import {
   Text,
   TouchableHighlight,
   Image,
-  StyleSheet
+  StyleSheet,
+  Platform,
+  StatusBar
 } from 'react-native'
 
 import Button from '../components/Button'
 import { SET_GAME_STATE } from '../actions/gameActions'
+import realm from '../config/realm'
 
 class MainMenu extends Component {
   static navigationOptions = {
@@ -20,7 +23,21 @@ class MainMenu extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {}
+    this.state = {
+      bestScore: null
+    }
+  }
+
+  componentWillMount() {
+    StatusBar.setBarStyle('dark-content')
+    if (Platform.OS == 'android')
+      StatusBar.setBackgroundColor('#E9E9E9')
+
+    const currentBestScore = realm.objects('Game')
+    if (currentBestScore.length > 0)
+      this.setState({
+        bestScore: currentBestScore.filtered('id = 1')[0].bestScore
+      })
   }
 
   playButton() {
@@ -31,7 +48,10 @@ class MainMenu extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image style={styles.appThumbnail}/>
+        <Text style={styles.gameTitle}>BATTLESHIP</Text>
+        <View style={styles.bestScore}>
+          <Text>Best Redundancy Score: {this.state.bestScore}</Text>
+        </View>
         <Button onPress={() => this.playButton()} dark>PLAY</Button>
       </View>
     )
@@ -45,10 +65,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 
-  appThumbnail: {
-    width: 290,
-    height: 290,
-    marginBottom: 140
+  gameTitle: {
+    alignSelf: 'center',
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#FF5500'
+  },
+
+  bestScore: {
+    marginVertical: 20,
+    alignSelf: 'center',
+    alignItems: 'center'
   },
 
   playButton: {
